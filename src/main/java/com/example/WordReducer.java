@@ -1,8 +1,3 @@
-// package com.example;
-
-// public class WordReducer{
-    
-// }
 package com.example;
 
 import org.apache.hadoop.io.IntWritable;

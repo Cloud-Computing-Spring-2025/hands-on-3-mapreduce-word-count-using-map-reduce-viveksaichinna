@@ -1,12 +1,3 @@
-// package com.example.controller;
-
-
-// public class Controller{
-
-//     public static void main(String[] args){
-        
-//     }
-// }
 package com.example.controller;
 
 import com.example.WordMapper;

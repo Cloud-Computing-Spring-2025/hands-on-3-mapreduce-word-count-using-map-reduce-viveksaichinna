@@ -1,118 +1,128 @@
+Project Overview
 
-# WordCount-Using-MapReduce-Hadoop
+This project demonstrates the implementation of a MapReduce job to perform a word count on a dataset using Apache Hadoop. The project utilizes Hadoop’s distributed processing capabilities to efficiently count word occurrences in a given text file.
 
-This repository is designed to test MapReduce jobs using a simple word count dataset.
+Approach and Implementation
 
-## Objectives
+Mapper Logic
 
-By completing this activity, students will:
+The Mapper class processes each line of input text, tokenizes words, and emits key-value pairs where the key is the word and the value is 1. This allows Hadoop to efficiently distribute and parallelize the word counting process.
 
-1. **Understand Hadoop's Architecture:** Learn how Hadoop's distributed file system (HDFS) and MapReduce framework work together to process large datasets.
-2. **Build and Deploy a MapReduce Job:** Gain experience in compiling a Java MapReduce program, deploying it to a Hadoop cluster, and running it using Docker.
-3. **Interact with Hadoop Ecosystem:** Practice using Hadoop commands to manage HDFS and execute MapReduce jobs.
-4. **Work with Docker Containers:** Understand how to use Docker to run and manage Hadoop components and transfer files between the host and container environments.
-5. **Analyze MapReduce Job Outputs:** Learn how to retrieve and interpret the results of a MapReduce job.
+Reducer Logic
 
-## Setup and Execution
+The Reducer class aggregates the key-value pairs received from the Mapper, summing up the occurrences of each word to produce the final count for each unique word.
 
-### 1. **Start the Hadoop Cluster**
+Execution Steps
 
-Run the following command to start the Hadoop cluster:
-
+1. Start the Hadoop Cluster
 ```bash
 docker compose up -d
 ```
-
-### 2. **Build the Code**
-
-Build the code using Maven:
-
+2. Build the Code
 ```bash
 mvn install
 ```
-
-### 3. **Move JAR File to Shared Folder**
-
-Move the generated JAR file to a shared folder for easy access:
-
+3. Move JAR File to Shared Folder
 ```bash
-mv target/*.jar shared-folder/input/code/
+mv target/*.jar shared-folder/input/data/
 ```
-
-### 4. **Copy JAR to Docker Container**
-
-Copy the JAR file to the Hadoop ResourceManager container:
-
+4. Copy JAR to Docker Container
 ```bash
-docker cp shared-folder/input/code/<your-jar-file>.jar resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/
+docker cp shared-folder/input/data/WordCountUsingHadoop-0.0.1-SNAPSHOT.jar resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/
 ```
-
-### 5. **Move Dataset to Docker Container**
-
-Copy the dataset to the Hadoop ResourceManager container:
-
+5. Move Dataset to Docker Container
 ```bash
 docker cp shared-folder/input/data/input.txt resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/
 ```
-
-### 6. **Connect to Docker Container**
-
-Access the Hadoop ResourceManager container:
-
+6. Connect to Docker Container
 ```bash
 docker exec -it resourcemanager /bin/bash
-```
-
-Navigate to the Hadoop directory:
-
-```bash
 cd /opt/hadoop-3.2.1/share/hadoop/mapreduce/
 ```
-
-### 7. **Set Up HDFS**
-
-Create a folder in HDFS for the input dataset:
-
+7. Set Up HDFS
 ```bash
 hadoop fs -mkdir -p /input/dataset
-```
-
-Copy the input dataset to the HDFS folder:
-
-```bash
 hadoop fs -put ./input.txt /input/dataset
 ```
-
-### 8. **Execute the MapReduce Job**
-
-Run your MapReduce job using the following command:
-
+8. Execute the MapReduce Job
 ```bash
-hadoop jar /opt/hadoop-3.2.1/share/hadoop/mapreduce/<your-jar-file>.jar com.example.controller.Controller /input/dataset/input.txt /output
+hadoop jar /opt/hadoop-3.2.1/share/hadoop/mapreduce/WordCountUsingHadoop-0.0.1-SNAPSHOT.jar com.example.controller.Controller /input/dataset/input.txt /output
 ```
-
-### 9. **View the Output**
-
-To view the output of your MapReduce job, use:
-
+9. View the Output
 ```bash
 hadoop fs -cat /output/*
 ```
+10. Copy Output from HDFS to Local Machine
+```bash
+hdfs dfs -get /output /opt/hadoop-3.2.1/share/hadoop/mapreduce/
+exit
+docker cp resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/output/ shared-folder/output/
+```
+Challenges Faced & Solutions
 
-### 10. **Copy Output from HDFS to Local OS**
+Docker Container File Transfer Issues: Initially faced issues with moving files between the host system and the container. Resolved by ensuring proper use of the docker cp command and correct path settings.
 
-To copy the output from HDFS to your local machine:
+HDFS Permissions: Encountered permission errors when writing to HDFS. Resolved by checking directory permissions and ensuring the Hadoop user had the necessary write access.
 
-1. Use the following command to copy from HDFS:
-    ```bash
-    hdfs dfs -get /output /opt/hadoop-3.2.1/share/hadoop/mapreduce/
-    ```
+Memory Management: Large datasets caused memory issues. Optimized performance by tuning Hadoop's memory allocation and parallel processing settings.
 
-2. use Docker to copy from the container to your local machine:
-   ```bash
-   exit 
-   ```
-    ```bash
-    docker cp resourcemanager:/opt/hadoop-3.2.1/share/hadoop/mapreduce/output/ shared-folder/output/
-    ```
-3. Commit and push to your repo so that we can able to see your output
+Sample Input and Output
+
+input: 
+Hadoop is a framework that allows for the distributed processing of large data sets across clusters of computers.
+Hadoop is designed to scale up from single servers to thousands of machines, each offering local computation and storage.
+Rather than rely on hardware to deliver high-availability, the library itself is designed to detect and handle failures at the application layer.
+MapReduce is a core component of the Hadoop ecosystems.
+
+output:
+a       2
+across  1
+allows  1
+and     2
+application     1
+at      1
+clusters        1
+component       1
+computation     1
+computers       1
+core    1
+data    1
+deliver 1
+designed        2
+detect  1
+distributed     1
+each    1
+ecosystems      1
+failures        1
+for     1
+framework       1
+from    1
+hadoop  3
+handle  1
+hardware        1
+highavailability        1
+is      4
+itself  1
+large   1
+layer   1
+library 1
+local   1
+machines        1
+mapreduce       1
+of      4
+offering        1
+on      1
+processing      1
+rather  1
+rely    1
+scale   1
+servers 1
+sets    1
+single  1
+storage 1
+than    1
+that    1
+the     4
+thousands       1
+to      4
+up      1
